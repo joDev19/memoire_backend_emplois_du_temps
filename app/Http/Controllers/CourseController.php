@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Course;
-use App\Services\ClasseService;
-use App\Services\EcService;
-use App\Services\FiliereService;
-use App\Services\UserService;
+use App\Http\Requests\CreateCourse;
+use App\Services\CourseService;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
+    public function __construct(private CourseService $courseService)
+    {
+
+    }
     /**
      * Display a listing of the resource.
      */
@@ -22,30 +23,24 @@ class CourseController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(int $year, EcService $ecService, UserService $userService, ClasseService $classeService, FiliereService $filiereService)
+    public function create(int $year)
     {
         // ecs by year - teachers - classes -
-        $data = [
-            'ecs' => $ecService->getByYear($year),
-            'professeurs' => $userService->getAllProfesseur(),
-            'classes' => $classeService->index(),
-            'filieres' => $filiereService->index()
-        ];
-        return response()->json($data, 200);
+        return response()->json($this->courseService->create($year), 200);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateCourse $request)
     {
-        //
+        return response()->json($this->courseService->store($request->validated()));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Course $course)
+    public function show(int $course)
     {
         //
     }
@@ -53,7 +48,7 @@ class CourseController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Course $course)
+    public function edit(int $course)
     {
         //
     }
@@ -61,7 +56,7 @@ class CourseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Course $course)
+    public function update(Request $request, int $course)
     {
         //
     }
@@ -69,7 +64,7 @@ class CourseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Course $course)
+    public function destroy(int $course)
     {
         //
     }

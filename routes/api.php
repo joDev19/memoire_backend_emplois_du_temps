@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClasseController;
+use App\Http\Controllers\CourseWeekController;
 use App\Http\Controllers\EcController;
 use App\Http\Controllers\FiliereController;
 use App\Http\Controllers\HourController;
@@ -28,3 +29,6 @@ Route::apiResource('users', UserController::class);
 Route::apiResource('hours', HourController::class);
 // course
 Route::get('course/create/year/{year}', [CourseController::class, 'create'])->name('courses.create');
+Route::apiResource('courses', CourseController::class);
+Route::apiResource('courseWeeks', CourseWeekController::class);
+Route::post('timetables', [CourseWeekController::class, 'storeTimetables']);
