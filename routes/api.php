@@ -25,6 +25,7 @@ Route::get('ecs/year/{year}', [EcController::class, 'getByYear']);
 
 Route::apiResource('filieres', FiliereController::class);
 Route::apiResource('ues', UeController::class);
+Route::get('users/create', [UserController::class, 'create']);
 Route::apiResource('users', UserController::class);
 Route::apiResource('hours', HourController::class);
 // course

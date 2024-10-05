@@ -25,8 +25,10 @@ class CreateUser extends FormRequest
             "name" => ['required'],
             "email" => ['required', 'email', 'unique:users,email'],
             "matricule" => ['nullable', 'numeric'],
-            "role" => ['required', Rule::in(['responsable', 'coordinateur', 'professeur']),],
-            "semestre_id" => ['nullable', 'exists:semestres,id'],
+            "roles_id" => ['required', 'array'],
+            "roles_id*" => ['required', 'exists:roles,id'],
+            "year_id" => ['nullable', 'exists:years,id'],
+            "telephone" => ['nullable', 'min:8', 'unique:users,telephone'],
             "filiere_id" => ['nullable', 'exists:filieres,id'],
             "password" => ['required'],
         ];

@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 use App\Http\Requests\CreateUser;
 use App\Http\Requests\UpdateUser;
+use App\Services\FiliereService;
+use App\Services\RoleService;
 use App\Services\UserService;
+use App\Services\YearService;
 use Illuminate\Http\Request;
 
 
@@ -28,7 +31,18 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $yearService = new YearService();
+        $roleService = new RoleService();
+        $filiereService = new FiliereService();
+        $data = [
+            'years' => $yearService->index(),
+            'roles' => $roleService->index(),
+            'filieres' => $filiereService->index(),
+        ];
+        // years
+        // roles
+        // filieres
+        return response()->json($data, 200);
     }
 
     /**

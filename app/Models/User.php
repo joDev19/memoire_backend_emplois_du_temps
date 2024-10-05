@@ -23,6 +23,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'telephone',
+        'filiere_id',
+        'year_id',
+        'matricule',
     ];
 
     /**
@@ -58,5 +62,5 @@ class User extends Authenticatable
     public function roles(): BelongsToMany{
         return $this->belongsToMany(Role::class);
     }
-    protected $with = ["filiere", "semestre"];
+    protected $with = ["filiere", "semestre", "roles"];
 }

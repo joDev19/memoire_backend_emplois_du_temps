@@ -47,5 +47,17 @@ class UserService extends CrudService
         return $professeurs->get();
     }
 
+    public function store($data){
+
+        $data_collect = collect($data);
+        $user = parent::store($data_collect->except('roles_id')->toArray());
+        // attribuer les roles
+        User::find($user->id)->roles()->attach($data_collect->get('roles_id'));
+        // recharger les relations
+        $user->refresh();
+        return $user;
+
+    }
+
 
 }
