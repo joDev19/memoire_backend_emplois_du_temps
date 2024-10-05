@@ -85,6 +85,61 @@ class UeSeeder extends Seeder
             ],
         ];
     }
+
+    private function getUeGlS5()
+    {
+        return [
+            [
+                'label' => "Formation sur une certification en Base de données et en Ingénierie logicielle",
+                'code' => "INF1521",
+            ],
+            [
+                'label' => "Applications Informatiques et Internet",
+                'code' => "INF1522",
+            ],
+            [
+                'label' => "Veille technologique en génie logiciel",
+                'code' => "INF1523",
+            ],
+            [
+                'label' => "Hackathon de développement d'application",
+                'code' => "INF1524",
+            ],
+            [
+                'label' => "Développement avancé d'application Web",
+                'code' => "INF1525",
+            ],
+            [
+                'label' => "Développement d'application Mobiles",
+                'code' => "INF1526",
+            ],
+            [
+                'label' => "Communication",
+                'code' => "CJO1527",
+            ],
+            [
+                'label' => "Techniques entrepreneuriales",
+                'code' => "TCC1528",
+            ],
+        ];
+    }
+    private function getUeGlS6()
+    {
+        return [
+            [
+                'label' => "Stage (12 semaines)",
+                'code' => "STG1621",
+            ],
+            [
+                'label' => "Discipline",
+                'code' => "DIS1622",
+            ],
+            [
+                'label' => "Rédaction et soutenance de rapport ou de mémoire (4 semaines)",
+                'code' => "STN1623",
+            ],
+        ];
+    }
     private function getFormattedData($data, $filiereCode, $semestreCode, FiliereService $filiereService = (new FiliereService()), SemestreService $semestreService = (new SemestreService()))
     {
         $formattedDatas = [];
@@ -114,6 +169,24 @@ class UeSeeder extends Seeder
             Ue::updateOrCreate($formattedData, ['created_at' => now(), 'updated_at' => now()]);
         }
     }
+    private function storeUeGlS5()
+    {
+        $filiereCode = 'GL';
+        $semestreCode = 'S5';
+        $formattedDatas = $this->getFormattedData($this->getUeGlS5(), $filiereCode, $semestreCode);
+        foreach ($formattedDatas as $formattedData) {
+            Ue::updateOrCreate($formattedData, ['created_at' => now(), 'updated_at' => now()]);
+        }
+    }
+    private function storeUeGlS6()
+    {
+        $filiereCode = 'GL';
+        $semestreCode = 'S6';
+        $formattedDatas = $this->getFormattedData($this->getUeGlS6(), $filiereCode, $semestreCode);
+        foreach ($formattedDatas as $formattedData) {
+            Ue::updateOrCreate($formattedData, ['created_at' => now(), 'updated_at' => now()]);
+        }
+    }
     /**
      * Run the database seeds.
      */
@@ -121,5 +194,7 @@ class UeSeeder extends Seeder
     {
         $this->storeUeGlS3();
         $this->storeUeGlS4();
+        $this->storeUeGlS5();
+        $this->storeUeGlS6();
     }
 }
