@@ -34,3 +34,4 @@ Route::apiResource('courses', CourseController::class);
 Route::apiResource('courseWeeks', CourseWeekController::class);
 Route::post('timetables', [CourseWeekController::class, 'storeTimetables']);
 Route::get('timetables/year/{yearId}/week/{weekId}', [CourseWeekController::class, 'getTimetables']);
+Route::get('timetables/forward/year/{yearId}/week/{weekId}', [CourseWeekController::class, 'forward']);

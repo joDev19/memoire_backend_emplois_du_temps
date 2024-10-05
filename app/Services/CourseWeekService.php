@@ -44,4 +44,42 @@ class CourseWeekService extends CrudService
             });
         })->findOrFail($weekId));
     }
+    public function addEmailToArray($email, $_array){
+        $array = $_array;
+        if(!$array->contains(function(string $value) use($email){
+            return $value == $email;
+        })){
+            $array->add($email);
+        }
+        return $array;
+    }
+
+    public function getAllMails($yearId, $weekId){
+        // récupérer les emplois cours qui sont dans l'emplois du temps à partager avec les filieres et les professeurs.
+        $cours = $this->getTabletime($yearId, $weekId)->courses()->with('filieres', 'ec.professeur')->get();
+        // mettre dans un tableau les emails des professeurs.
+        $emails = collect([]);
+        // mettre dans un tableau les emails des responsables.
+        $userService = new UserService();
+        foreach ($cours as $key => $cour) {
+            $emails = $this->addEmailToArray($cour->ec->professeur->email, $emails);
+            // dd($emails);
+            // avoir toutes les filieres concerné par ce cour
+            foreach ($cour->filieres as $key => $filiere) {
+                // avoir les mails des responsables de chaque filiere
+                $respoMails = $userService->getAllRespoByYearAndByFiliere($yearId, $filiere->id)->pluck('email');
+                // ajouter ces mails à notre tableau
+                foreach ($respoMails as $key => $mail) {
+                    $emails = $this->addEmailToArray($mail, $emails);
+                    // $emails->add($mail);
+                }
+            }
+        }
+        //return $users;
+        return $emails;
+    }
+    public function forward($yearId, $weekId){
+        $emails = $this->getAllMails($yearId, $weekId);
+        dd($emails);
+    }
 }

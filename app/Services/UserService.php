@@ -47,7 +47,8 @@ class UserService extends CrudService
         return $professeurs->get();
     }
 
-    public function store($data){
+    public function store($data)
+    {
 
         $data_collect = collect($data);
         $user = parent::store($data_collect->except('roles_id')->toArray());
@@ -57,6 +58,13 @@ class UserService extends CrudService
         $user->refresh();
         return $user;
 
+    }
+    public function getAllRespoByYearAndByFiliere($yearId, $filiereId)
+    {
+        return User::where([
+            ['year_id', '=', $yearId],
+            ['filiere_id', '=', $filiereId],
+        ])->get();
     }
 
 
