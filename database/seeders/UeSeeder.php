@@ -48,6 +48,43 @@ class UeSeeder extends Seeder
             ],
         ];
     }
+    private function getUeGlS4()
+    {
+        return [
+            [
+                'label' => "Programmation avancée en python et R",
+                'code' => "INF1421",
+            ],
+            [
+                'label' => "Programmation et manipulation des données",
+                'code' => "INF1422",
+            ],
+            [
+                'label' => "Système d'information décisionnelle et sécurité",
+                'code' => "INF1423",
+            ],
+            [
+                'label' => "Génie logiciel",
+                'code' => "INF1424",
+            ],
+            [
+                'label' => "Cycle de vie d'un logiciel et assurance qualité",
+                'code' => "INF1425",
+            ],
+            [
+                'label' => "Gestion des projets",
+                'code' => "GES1426",
+            ],
+            [
+                'label' => "Communication managériale",
+                'code' => "MGT1427",
+            ],
+            [
+                'label' => "Anglais pour la communication scientifique",
+                'code' => "ANG1428"
+            ],
+        ];
+    }
     private function getFormattedData($data, $filiereCode, $semestreCode, FiliereService $filiereService = (new FiliereService()), SemestreService $semestreService = (new SemestreService()))
     {
         $formattedDatas = [];
@@ -68,11 +105,21 @@ class UeSeeder extends Seeder
             Ue::updateOrCreate($formattedData, ['created_at' => now(), 'updated_at' => now()]);
         }
     }
+    private function storeUeGlS4()
+    {
+        $filiereCode = 'GL';
+        $semestreCode = 'S4';
+        $formattedDatas = $this->getFormattedData($this->getUeGlS4(), $filiereCode, $semestreCode);
+        foreach ($formattedDatas as $formattedData) {
+            Ue::updateOrCreate($formattedData, ['created_at' => now(), 'updated_at' => now()]);
+        }
+    }
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
         $this->storeUeGlS3();
+        $this->storeUeGlS4();
     }
 }

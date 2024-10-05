@@ -40,9 +40,9 @@ class CourseWeekController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(CourseWeek $courseWeek)
+    public function show(int $courseWeek)
     {
-        //
+        return response()->json( $this->courseWeekService->show($courseWeek) ,200);
     }
 
     /**
@@ -71,5 +71,9 @@ class CourseWeekController extends Controller
 
     public function storeTimetables(StoreTimetables $request){
         return response()->json($this->courseWeekService->storeTableTime($request->validated()), 201);
+    }
+
+    public function getTimetables($yearId, $weekId){
+        return response()->json($this->courseWeekService->getTabletime($yearId, $weekId), 200);
     }
 }

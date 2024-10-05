@@ -42,7 +42,7 @@ class CourseController extends Controller
      */
     public function show(int $course)
     {
-        //
+        return response()->json($this->courseService->show($course), 200);
     }
 
     /**

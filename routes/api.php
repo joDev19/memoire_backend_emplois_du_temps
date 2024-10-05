@@ -32,3 +32,4 @@ Route::get('course/create/year/{year}', [CourseController::class, 'create'])->na
 Route::apiResource('courses', CourseController::class);
 Route::apiResource('courseWeeks', CourseWeekController::class);
 Route::post('timetables', [CourseWeekController::class, 'storeTimetables']);
+Route::get('timetables/year/{yearId}/week/{weekId}', [CourseWeekController::class, 'getTimetables']);

@@ -25,4 +25,7 @@ class Course extends Model
     public function course_week(): BelongsTo{
         return $this->belongsTo(CourseWeek::class);
     }
+    public function ec(): BelongsTo{
+        return $this->belongsTo(Ec::class);
+    }
 }

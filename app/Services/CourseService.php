@@ -1,5 +1,6 @@
 <?php
 namespace App\Services;
+use App\Http\Resources\CourseRessource;
 use App\Models\Course;
 class CourseService extends CrudService
 {
@@ -26,4 +27,8 @@ class CourseService extends CrudService
         $course->refresh();
         return $course->with('filieres')->get();
     }
+
+    // public function show($id){
+    //     return new CourseRessource(parent::show($id));
+    // }
 }

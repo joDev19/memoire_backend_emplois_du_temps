@@ -19,4 +19,7 @@ class Ec extends Model
     public function ue():BelongsTo{
         return $this->belongsTo(Ue::class);
     }
+    public function professeur():BelongsTo{
+        return $this->belongsTo(User::class, 'professeur_id');
+    }
 }

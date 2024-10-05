@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('matricule')->unique()->nullable();
             $table->foreignId('filiere_id')->nullable()->constrained();
-            $table->foreignId('semestre_id')->nullable()->constrained();
+            $table->foreignId('year_id')->nullable()->constrained();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
