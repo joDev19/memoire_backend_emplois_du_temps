@@ -57,7 +57,31 @@ class EcSeeder extends Seeder
         $ueService = new UeService();
         $professeurId = $userService->getAllProfesseur()->first()->id;
         return [
+            ['label' => 'Formation sur une certification en Base de données et en Ingénierie logicielle', 'masse_horaire' => 100, 'code' => '1INF1521', 'ue_id' => $ueService->index(['code' => 'INF1521'])->first()->id, 'professeur_id' => $professeurId],
+            ['label' => 'Interface Homme-Machine et ergonomie des applications', 'masse_horaire' => 62, 'code' => '1INF1522', 'ue_id' => $ueService->index(['code' => 'INF1522'])->first()->id, 'professeur_id' => $professeurId],
+            ['label' => 'Sécurité des applications', 'masse_horaire' => 62, 'code' => '2INF1522', 'ue_id' => $ueService->index(['code' => 'INF1522'])->first()->id, 'professeur_id' => $professeurId],
+            ['label' => 'Veille technologique en génie logiciel', 'masse_horaire' => 100, 'code' => '1INF1523', 'ue_id' => $ueService->index(['code' => 'INF1523'])->first()->id, 'professeur_id' => $professeurId],
+            ['label' => 'Hackathon de développement d\'application', 'masse_horaire' => 100, 'code' => '1INF1524', 'ue_id' => $ueService->index(['code' => 'INF1524'])->first()->id, 'professeur_id' => $professeurId],
+            ['label' => 'Projets d\'initiation aux Framework', 'masse_horaire' => 50, 'code' => '1INF1525', 'ue_id' => $ueService->index(['code' => 'INF1525'])->first()->id, 'professeur_id' => $professeurId],
+            ['label' => 'Conception et développement d\'APIs', 'masse_horaire' => 50, 'code' => '2INF1525', 'ue_id' => $ueService->index(['code' => 'INF1525'])->first()->id, 'professeur_id' => $professeurId],
+            ['label' => 'Développement d\'applications Mobiles', 'masse_horaire' => 100, 'code' => '1INF1526', 'ue_id' => $ueService->index(['code' => 'INF1526'])->first()->id, 'professeur_id' => $professeurId],
+            ['label' => 'Force de vente et communication digitale', 'masse_horaire' => 37, 'code' => '1CJO1527', 'ue_id' => $ueService->index(['code' => 'CJO1527'])->first()->id, 'professeur_id' => $professeurId],
+            ['label' => 'Outils de rédaction de mémoire', 'masse_horaire' => 37, 'code' => '2CJO1527', 'ue_id' => $ueService->index(['code' => 'CJO1527'])->first()->id, 'professeur_id' => $professeurId],
+            ['label' => 'Techniques entrepreneuriales', 'masse_horaire' => 50, 'code' => '1TCC1528', 'ue_id' => $ueService->index(['code' => 'TCC1528'])->first()->id, 'professeur_id' => $professeurId],
 
+        ];
+    }
+
+    public function getEcsGlS6(){
+        $userService = new UserService();
+        $ueService = new UeService();
+        $professeurId = $userService->getAllProfesseur()->first()->id;
+        return [
+            ['label' => 'Stage (12 semaines)', 'masse_horaire' => 425, 'code' => '1STG1621', 'ue_id' => $ueService->index(['code' => 'STG1621'])->first()->id, 'professeur_id' => $professeurId],
+            ['label' => 'Discipline', 'masse_horaire' => 25, 'code' => '1DIS1622', 'ue_id' => $ueService->index(['code' => 'DIS1622'])->first()->id, 'professeur_id' => $professeurId],
+            ['label' => 'Rédaction de mémoire ou de rapport', 'masse_horaire' => 150, 'code' => '1STN1623', 'ue_id' => $ueService->index(['code' => 'STN1623'])->first()->id, 'professeur_id' => $professeurId],
+            ['label' => 'Pre-soutenance', 'masse_horaire' => 100, 'code' => '2STN1623', 'ue_id' => $ueService->index(['code' => 'STN1623'])->first()->id, 'professeur_id' => $professeurId],
+            ['label' => 'Soutenance', 'masse_horaire' => 50, 'code' => '3STN1623', 'ue_id' => $ueService->index(['code' => 'STN1623'])->first()->id, 'professeur_id' => $professeurId],
         ];
     }
     public function storeEcsGlS3()
@@ -72,6 +96,16 @@ class EcSeeder extends Seeder
             Ec::updateOrCreate($ec, ['updated_at' => now(), 'created_at' => now()]);
         }
     }
+    public function storeEcsGlS5(){
+        foreach ($this->getEcsGlS5() as $key => $ec) {
+            Ec::updateOrCreate($ec, ['updated_at' => now(), 'created_at' => now()]);
+        }
+    }
+    public function storeEcsGlS6(){
+        foreach ($this->getEcsGlS6() as $key => $ec) {
+            Ec::updateOrCreate($ec, ['updated_at' => now(), 'created_at' => now()]);
+        }
+    }
     /**
      * Run the database seeds.
      */
@@ -79,5 +113,7 @@ class EcSeeder extends Seeder
     {
         $this->storeEcsGlS3();
         $this->storeEcsGlS4();
+        $this->storeEcsGlS5();
+        $this->storeEcsGlS6();
     }
 }
