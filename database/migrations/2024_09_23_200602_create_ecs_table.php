@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('ecs', function (Blueprint $table) {
             $table->id();
             $table->string('label');
-            $table->string('code')->unique();
+            $table->string('code');
             $table->integer('masse_horaire');
             // $table->string('masse_horaire');
             $table->foreignId('ue_id')->cascadeOnDelete()->constrained();

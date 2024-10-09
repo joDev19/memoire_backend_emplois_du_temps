@@ -23,7 +23,9 @@ class CourseRessource extends JsonResource
             "start" => $this->day.'T'.$this->start,
             "end" => $this->day.'T'.$this->end,
             "prof" => Ec::findOrFail($this->ec_id)->professeur->name,
-            "filieres" => $this->filieres()->pluck('filiere_id')
+            "filieres" => $this->filieres()->pluck('filiere_id'),
+            "backgroundColor" => "white",
+            "textColor" => "black",
         ];
     }
 }

@@ -145,7 +145,7 @@ class UeSeeder extends Seeder
         $formattedDatas = [];
         foreach ($data as $key => $ue) {
             array_push($formattedDatas, array_merge($ue, [
-                'filiere_id' => $filiereService->index(['code' => $filiereCode])->first()->id,
+                // 'filiere_id' => $filiereService->index(['code' => $filiereCode])->first()->id,
                 'semestre_id' => $semestreService->index(['code' => $semestreCode])->first()->id,
             ]));
         }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('label');
             $table->string('code');
-            $table->foreignId('filiere_id')->constrained()->cascadeOnDelete();
+            // $table->foreignId('filiere_id')->constrained()->cascadeOnDelete();
             $table->foreignId('semestre_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

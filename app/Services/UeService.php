@@ -5,4 +5,8 @@ class UeService extends CrudService {
     public function __construct(){
         parent::__construct(new Ue());
     }
+    public function store($data){
+        dd($data);
+    }
 }
+
