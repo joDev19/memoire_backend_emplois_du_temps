@@ -26,6 +26,11 @@ class FiliereSeeder extends Seeder
                 'label' => 'Intélligence Artificiel',
                 'code' => 'IA',
             ],
+            [
+                'label' => 'Système Embarqué et Internet Of Thing',
+                'code' => 'SEIOT',
+            ],
+
         ];
     }
     /**

@@ -3,6 +3,7 @@
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\CourseWeekController;
 use App\Http\Controllers\EcController;
+use App\Http\Controllers\EcDoneController;
 use App\Http\Controllers\FiliereController;
 use App\Http\Controllers\HourController;
 use App\Http\Controllers\SemestreController;
@@ -22,6 +23,7 @@ Route::apiResource('semestres', SemestreController::class);
 Route::apiResource('years', YearController::class);
 Route::apiResource('ecs', EcController::class);
 Route::get('ecs/year/{year}', [EcController::class, 'getByYear']);
+Route::get('ecs/year/{year}/filiere/{filiere}', [EcController::class, 'getByYearAndByFiliere']);
 
 Route::apiResource('filieres', FiliereController::class);
 Route::apiResource('ues', UeController::class);
@@ -35,3 +37,5 @@ Route::apiResource('courseWeeks', CourseWeekController::class);
 Route::post('timetables', [CourseWeekController::class, 'storeTimetables']);
 Route::get('timetables/year/{yearId}/week/{weekId}', [CourseWeekController::class, 'getTimetables']);
 Route::get('timetables/forward/year/{yearId}/week/{weekId}', [CourseWeekController::class, 'forward']);
+//EcDone
+Route::apiResource('ec-dones', EcDoneController::class);

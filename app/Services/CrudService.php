@@ -38,9 +38,9 @@ class CrudService implements ServiceContract
     }
     public function filter($data)
     {
-        $formatedData = $this->filterFormatter($data);
+        $formatedData = $this->filterFormatter(collect($data));
         return $this->model->where(
             $formatedData->values()->all()
-        )->get();
+        );
     }
 }

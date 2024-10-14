@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Ue extends Model
 {
@@ -15,11 +16,11 @@ class Ue extends Model
         'filiere_id',
         'semestre_id',
     ];
-    public function filiere(): BelongsTo{
-        return $this->belongsTo(Filiere::class);
+    public function filieres(): BelongsToMany{
+        return $this->belongsToMany(Filiere::class);
     }
     public function semestre(): BelongsTo{
         return $this->belongsTo(Semestre::class);
     }
-    protected $with = ['filiere', 'semestre'];
+    //protected $with = ['filieres', 'semestre'];
 }

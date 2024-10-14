@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('masse_horaire');
             // $table->string('masse_horaire');
             $table->foreignId('ue_id')->cascadeOnDelete()->constrained();
+            // $table->foreignId('ec_id')->cascadeOnDelete()->constrained();
             $table->unsignedBigInteger('professeur_id')->nullable();
             $table->foreign('professeur_id')->nullOnDelete()->references('id')->on('users');
             $table->timestamps();

@@ -89,4 +89,10 @@ class EcController extends Controller
             200
         );
     }
+    public function getByYearAndByFiliere(int $year, int $filiere){
+        return response()->json(
+            $this->ecService->getByYearAndByFiliere($year, $filiere),
+            200
+        );
+    }
 }

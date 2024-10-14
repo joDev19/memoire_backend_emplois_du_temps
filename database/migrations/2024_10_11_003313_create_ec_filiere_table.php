@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('table_filiere_ue', function (Blueprint $table) {
+        Schema::create('ec_filiere', function (Blueprint $table) {
             $table->id();
             $table->foreignId('filiere_id')->nullOnDelete()->constrained();
-            $table->foreignId('ue_id')->nullOnDelete()->constrained();
+            $table->foreignId('ec_id')->nullOnDelete()->constrained();
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('table_filiere_ue');
+        Schema::dropIfExists('ec_filiere');
     }
 };

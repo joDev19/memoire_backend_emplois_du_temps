@@ -17,4 +17,10 @@ class Filiere extends Model
     public function courses(): BelongsToMany{
         return $this->belongsToMany(Course::class);
     }
+    public function ues(): BelongsToMany{
+        return $this->belongsToMany(Ue::class);
+    }
+    public function ecs(): BelongsToMany{
+        return $this->belongsToMany(Ec::class);
+    }
 }
