@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 use App\Http\Resources\TabletimeRessource;
+use App\Http\Resources\TimetableByFiliereRessource;
 use App\Models\CourseWeek;
 class CourseWeekService extends CrudService
 {
@@ -30,9 +31,9 @@ class CourseWeekService extends CrudService
         return $week->with('courses')->findOrFail($weekId);
     }
 
-    public function getTabletime($yearId, $weekId)
+    public function getTabletime($yearId, $weekId, $filiereId = null)
     {
-        return new TabletimeRessource(CourseWeek::with('courses.filieres')->whereHas('courses', function ($query) use ($yearId): void {
+        $courseWeek = CourseWeek::with('courses.filieres')->whereHas('courses', function ($query) use ($yearId): void {
             $query->whereHas('ec', function ($subQuery) use ($yearId) {
                 $subQuery->whereHas('ue', function ($subSubQuery) use ($yearId) {
                     $subSubQuery->whereHas('semestre', function ($subSubSubQuery) use ($yearId) {
@@ -42,19 +43,28 @@ class CourseWeekService extends CrudService
                     });
                 });
             });
-        })->findOrFail($weekId));
+        })->findOrFail($weekId);
+        if ($filiereId == null) {
+            return new TabletimeRessource($courseWeek);
+        }   
+        return new TimetableByFiliereRessource($courseWeek, $filiereId);
+
     }
-    public function addEmailToArray($email, $_array){
+    public function addEmailToArray($email, $_array)
+    {
         $array = $_array;
-        if(!$array->contains(function(string $value) use($email){
-            return $value == $email;
-        })){
+        if (
+            !$array->contains(function (string $value) use ($email) {
+                return $value == $email;
+            })
+        ) {
             $array->add($email);
         }
         return $array;
     }
 
-    public function getAllMails($yearId, $weekId){
+    public function getAllMails($yearId, $weekId)
+    {
         // récupérer les emplois cours qui sont dans l'emplois du temps à partager avec les filieres et les professeurs.
         $cours = $this->getTabletime($yearId, $weekId)->courses()->with('filieres', 'ec.professeur')->get();
         // mettre dans un tableau les emails des professeurs.
@@ -78,7 +88,8 @@ class CourseWeekService extends CrudService
         //return $users;
         return $emails;
     }
-    public function forward($yearId, $weekId){
+    public function forward($yearId, $weekId)
+    {
         $emails = $this->getAllMails($yearId, $weekId);
         dd($emails);
     }

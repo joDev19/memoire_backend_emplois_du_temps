@@ -16,4 +16,9 @@ class CourseWeek extends Model
     public function courses(): HasMany{
         return $this->hasMany(Course::class);
     }
+    public function coursesByFiliere($filiereId){
+        return $this->courses()->whereHas('filieres', function($query) use($filiereId){
+            $query->where('filieres.id', $filiereId);
+        });
+    }
 }

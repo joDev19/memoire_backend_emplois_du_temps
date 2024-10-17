@@ -73,8 +73,9 @@ class CourseWeekController extends Controller
         return response()->json($this->courseWeekService->storeTableTime($request->validated()), 201);
     }
 
-    public function getTimetables($yearId, $weekId){
-        return response()->json($this->courseWeekService->getTabletime($yearId, $weekId), 200);
+    public function getTimetables($yearId, $weekId, Request $request){
+        // return $request->filiere_id == null;
+        return response()->json($this->courseWeekService->getTabletime($yearId, $weekId, $request->filiere_id), 200);
     }
 
     public function forward($yearId, $weekId){
