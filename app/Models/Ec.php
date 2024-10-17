@@ -41,5 +41,7 @@ class Ec extends Model
             get: fn () => $ecService->getRemainingHour($this->id),
         );
     }
+
+    protected $with = ['filieres'];
     protected $appends = ['remaining_hour'];
 }
