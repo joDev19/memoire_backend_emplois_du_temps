@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AssignTeacheerToEcRequest;
 use App\Models\Ec;
 use App\Services\EcService;
 use App\Http\Requests\CreateEc;
@@ -9,7 +10,8 @@ use Illuminate\Http\Request;
 
 class EcController extends Controller
 {
-    public function __construct(private EcService $ecService){
+    public function __construct(private EcService $ecService)
+    {
 
     }
     /**
@@ -28,7 +30,7 @@ class EcController extends Controller
      */
     public function create()
     {
-        //
+        return response()->json($this->ecService->create(), 200);
     }
 
     /**
@@ -83,16 +85,29 @@ class EcController extends Controller
         );
     }
 
-    public function getByYear(int $year){
+    public function getByYear(int $year)
+    {
         return response()->json(
             $this->ecService->getByYear($year),
             200
         );
     }
-    public function getByYearAndByFiliere(int $year, int $filiere){
+    public function getByYearAndByFiliere(int $year, int $filiere)
+    {
         return response()->json(
             $this->ecService->getByYearAndByFiliere($year, $filiere),
             200
         );
     }
+
+    public function assignTeacher($teacherId, AssignTeacheerToEcRequest $request)
+    {
+        // dd($request->validated(), $teacherId);
+        return response()->json(
+            $this->ecService->assignTeacher($teacherId, $request->validated()['ecsId']),
+            200
+        );
+    }
+
+
 }

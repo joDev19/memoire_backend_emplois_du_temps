@@ -21,9 +21,11 @@ Route::get('/user', function (Request $request) {
 Route::apiResource('classes', ClasseController::class);
 Route::apiResource('semestres', SemestreController::class);
 Route::apiResource('years', YearController::class);
-Route::apiResource('ecs', EcController::class);
+Route::Resource('ecs', EcController::class);
+Route::post('ecs/assign-teacher/{teacherId}/', [EcController::class, 'assignTeacher'])->name('assign-teacher-to-ec');
 Route::get('ecs/year/{year}', [EcController::class, 'getByYear']);
 Route::get('ecs/year/{year}/filiere/{filiere}', [EcController::class, 'getByYearAndByFiliere']);
+// Route::get('/ecs/create', [EcController::class, 'create'])->name('ecs.create');
 
 Route::apiResource('filieres', FiliereController::class);
 Route::apiResource('ues', UeController::class);
