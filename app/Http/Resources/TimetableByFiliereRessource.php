@@ -17,12 +17,14 @@ class TimetableByFiliereRessource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // return $this->coursesByFiliere($this->filiereId);
         // return parent::toArray($request);
         return [
             "id" => $this->id,
             "start" => $this->start,
             "end" => $this->end,
             "courses" => CourseRessource::collection($this->coursesByFiliere($this->filiereId)->with('filieres')->get()),
+            // "courses"=>$this->coursesByFiliere($this->filiereId)->with('filieres')->get(),
         ];
     }
 }

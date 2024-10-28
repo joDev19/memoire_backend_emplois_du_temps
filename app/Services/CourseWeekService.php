@@ -2,6 +2,7 @@
 namespace App\Services;
 use App\Http\Resources\TabletimeRessource;
 use App\Http\Resources\TimetableByFiliereRessource;
+use Illuminate\Http\Request;
 use App\Models\CourseWeek;
 class CourseWeekService extends CrudService
 {
@@ -25,7 +26,7 @@ class CourseWeekService extends CrudService
         // vérification
         $weekId = $week->id;
         foreach ($_data->get('courses') as $key => $course) {
-            (new CourseService)->store(collect($course)->merge(['course_week_id' => $weekId])->toArray());
+            (new CourseService)->store(collect($course)->merge(['course_week_id' => $weekId]));
         }
         $week->refresh();
         return $week->with('courses')->findOrFail($weekId);
@@ -46,7 +47,9 @@ class CourseWeekService extends CrudService
         })->findOrFail($weekId);
         if ($filiereId == null) {
             return new TabletimeRessource($courseWeek);
-        }   
+        }
+        // dd($filiereId);
+        //dd(new TimetableByFiliereRessource($courseWeek, $filiereId));
         return new TimetableByFiliereRessource($courseWeek, $filiereId);
 
     }
@@ -63,11 +66,14 @@ class CourseWeekService extends CrudService
         return $array;
     }
 
-    public function getAllMails($yearId, $weekId)
+    public function getAllMails($yearId, $weekId, $filiereId = null)
     {
         // récupérer les emplois cours qui sont dans l'emplois du temps à partager avec les filieres et les professeurs.
-        $cours = $this->getTabletime($yearId, $weekId)->courses()->with('filieres', 'ec.professeur')->get();
+        //dd($this->getTabletime($yearId, $weekId, $filiereId)->courses);
+        $cours = $this->getTabletime($yearId, $weekId, $filiereId)->courses()->with('filieres', 'ec.professeur')->get();
+        //dd($cours->count());
         // mettre dans un tableau les emails des professeurs.
+        // dd($cours);
         $emails = collect([]);
         // mettre dans un tableau les emails des responsables.
         $userService = new UserService();
@@ -75,6 +81,7 @@ class CourseWeekService extends CrudService
             $emails = $this->addEmailToArray($cour->ec->professeur->email, $emails);
             // dd($emails);
             // avoir toutes les filieres concerné par ce cour
+            // dd($cour->filieres->count());
             foreach ($cour->filieres as $key => $filiere) {
                 // avoir les mails des responsables de chaque filiere
                 $respoMails = $userService->getAllRespoByYearAndByFiliere($yearId, $filiere->id)->pluck('email');
@@ -88,9 +95,18 @@ class CourseWeekService extends CrudService
         //return $users;
         return $emails;
     }
-    public function forward($yearId, $weekId)
+    public function generatePdf($yearId, $weekId, $filiereId)
     {
-        $emails = $this->getAllMails($yearId, $weekId);
-        dd($emails);
+
+
+    }
+
+    public function forward($yearId, $weekId, $filiereId)
+    {
+        $emails = $this->getAllMails($yearId, $weekId, $filiereId);
+        //dd($emails);
+        return $this->generatePdf($yearId, $weekId, $filiereId);
+
+        //return $emails;
     }
 }
