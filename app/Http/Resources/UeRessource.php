@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class EcResource extends JsonResource
+class UeRessource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,15 +17,12 @@ class EcResource extends JsonResource
         //return parent::toArray($request);
         return [
             "id" => $this->id,
-            "code" => $this->code,
             "label" => $this->label,
+            "code" => $this->code,
+            "semestre" => $this->semestre,
             "filieres" => $this->filieres,
-            "ue" => $this->ue,
-            "masse_horaire" => $this->masse_horaire,
-            "masse_horaire_restante" => $this->remaining_hour,
             "created_at" => $this->created_at,
-            "professeur" => $this->professeur->name,
-            "semestre" => $this->ue->semestre
+            "ecs" => $this->ecs,
         ];
     }
 }

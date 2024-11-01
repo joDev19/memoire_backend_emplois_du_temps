@@ -39,5 +39,6 @@ Route::apiResource('courseWeeks', CourseWeekController::class);
 Route::post('timetables', [CourseWeekController::class, 'storeTimetables']);
 Route::get('timetables/year/{yearId}/week/{weekId}', [CourseWeekController::class, 'getTimetables']);
 Route::get('timetables/forward/year/{yearId}/week/{weekId}/filiere/{filiereId}', [CourseWeekController::class, 'forward']);
+Route::post('courses/get-old-courses', [CourseWeekController::class, 'getOldCourses']);
 //EcDone
 Route::apiResource('ec-dones', EcDoneController::class);

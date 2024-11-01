@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateCourseWeek;
+use App\Http\Requests\GetOldCourses;
 use App\Http\Requests\StoreTimetables;
 use App\Models\CourseWeek;
 use App\Services\CourseWeekService;
@@ -81,5 +82,9 @@ class CourseWeekController extends Controller
     public function forward($yearId, $weekId, $filiereId){
         return $this->courseWeekService->forward($yearId, $weekId, $filiereId);
         // return response()->json($this->courseWeekService->forward($yearId, $weekId, $filiereId), 200);
+    }
+
+    public function getOldCourses(GetOldCourses $request){
+        return response()->json($this->courseWeekService->getOldCourse($request->oldDate, $request->yearId), 200);
     }
 }

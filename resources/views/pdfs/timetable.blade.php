@@ -69,9 +69,9 @@
                 events: [{ // this object will be "parsed" into an Event Object
                         id: '1',
                         title: 'Politique de sécurité des systèmes d’information', // a property!
-                        start: new Date('2024-10-24T08:00'), // a property!
+                        start: new Date('2024-10-30T08:00'), // a property!
                         end: new Date(
-                        '2024-10-24T12:00'), // a property! ** see important note below about 'end' **
+                        '2024-10-30T12:00'), // a property! ** see important note below about 'end' **
                         backgroundColor: "white",
                         prof: "E. ASSOGBA",
                         salle: 'PADTICE',

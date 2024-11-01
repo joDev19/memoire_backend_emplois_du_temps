@@ -23,4 +23,6 @@ class Filiere extends Model
     public function ecs(): BelongsToMany{
         return $this->belongsToMany(Ec::class);
     }
+
+    //protected $with = ["ecs"];
 }

@@ -7,4 +7,4 @@ Route::get('/', function () {
 });
 Route::get('/test', function () {
     return view('pdfs.timetable');
-});
+})->name('test-route');
