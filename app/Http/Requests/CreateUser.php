@@ -24,7 +24,7 @@ class CreateUser extends FormRequest
         return [
             "name" => ['required'],
             "email" => ['required', 'email', 'unique:users,email'],
-            "matricule" => ['nullable', 'numeric'],
+            "matricule" => ['nullable', 'numeric', 'unique:users,matricule'],
             "roles_id" => ['required', 'array'],
             "roles_id*" => ['required', 'exists:roles,id'],
             "year_id" => ['nullable', 'exists:years,id'],

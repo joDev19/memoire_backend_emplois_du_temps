@@ -2,6 +2,7 @@
 namespace App\Services;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 class UserService extends CrudService
 {
     public function __construct()
@@ -65,6 +66,41 @@ class UserService extends CrudService
             ['year_id', '=', $yearId],
             ['filiere_id', '=', $filiereId],
         ])->get();
+    }
+    public function login($email, $password, $matricule = null)
+    {
+        // dd($email, $password, $matricule);
+        $user = null;
+        if ($matricule == null) {
+            // c'est un prof
+            $user = $this->filter(['email' => $email])->first();
+            if ($user == null) {
+                abort(404, 'This email is not found');
+            }
+            // vérifier son mot de passe
+            if(!Hash::check($password, $user->password)){
+                abort(401, "Bad credentials");
+            }
+            // good ! We can login teacher
+            Auth::login($user);
+            return $user;
+        }
+        // c'est un responsable
+        $user = $this->filter(['matricule' => $matricule])->first();
+        if ($user == null) {
+            abort(404, 'This matricule is not found');
+        }
+        // vérifier son mot de passe
+        if(!Hash::check($password, $user->password)){
+            abort(401, "Bad credentials");
+        }
+        // good ! We can login class prefect
+        Auth::login($user);
+        return $user;
+    }
+
+    function logout(){
+        return Auth::logout();
     }
 
 

@@ -14,11 +14,14 @@ use App\Http\Controllers\CourseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::post('/login', [UserController::class, 'login']);
+Route::get('/logout', [UserController::class, 'logout']);
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
 Route::apiResource('classes', ClasseController::class);
+Route::get('semestres/create', [SemestreController::class, 'create'])->name('semestres.create');
 Route::apiResource('semestres', SemestreController::class);
 Route::apiResource('years', YearController::class);
 Route::Resource('ecs', EcController::class);
@@ -32,7 +35,7 @@ Route::apiResource('ues', UeController::class);
 Route::get('users/create', [UserController::class, 'create']);
 Route::apiResource('users', UserController::class);
 Route::apiResource('hours', HourController::class);
-// course
+// courselabel
 Route::get('course/create/year/{year}', [CourseController::class, 'create'])->name('courses.create');
 Route::apiResource('courses', CourseController::class);
 Route::apiResource('courseWeeks', CourseWeekController::class);

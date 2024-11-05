@@ -28,7 +28,6 @@ class YearController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**

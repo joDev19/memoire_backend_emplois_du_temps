@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Year extends Model
 {
     use HasFactory;
-    protected $fillable = ['label'];
+    protected $fillable = ['label', 'year_id', 'code'];
     public function semestres(): HasMany{
         return $this->hasMany(Semestre::class);
     }

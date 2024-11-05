@@ -28,7 +28,7 @@ class SemestreController extends Controller
      */
     public function create()
     {
-        //
+        return response()->json($this->semestreService->create(), 200);
     }
 
     /**

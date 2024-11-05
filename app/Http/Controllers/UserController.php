@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Http\Requests\CreateUser;
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\UpdateUser;
 use App\Services\FiliereService;
 use App\Services\RoleService;
@@ -12,7 +13,8 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function __construct(private UserService $userService){
+    public function __construct(private UserService $userService)
+    {
 
     }
     /**
@@ -96,6 +98,15 @@ class UserController extends Controller
             $this->userService->delete($user),
             200
         );
+    }
+
+    public function login(LoginRequest $request)
+    {
+        return response()->json($this->userService->login($request->email, $request->password, $request->matricule), 200);
+    }
+
+    public function logout(){
+        return response()->json($this->userService->logout());
     }
 
 

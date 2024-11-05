@@ -14,6 +14,8 @@ class YearSeeder extends Seeder
             ['label' => 'L1'],
             ['label' => 'L2'],
             ['label' => 'L3'],
+            ['label' => 'M1'],
+            ['label' => 'M2'],
         ];
     }
     /**

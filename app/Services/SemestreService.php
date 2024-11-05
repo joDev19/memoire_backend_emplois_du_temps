@@ -7,4 +7,7 @@ class SemestreService extends CrudService
     {
         parent::__construct(new Semestre());
     }
+    public function create(){
+        return ["years" => (new YearService())->index()];
+    }
 }
