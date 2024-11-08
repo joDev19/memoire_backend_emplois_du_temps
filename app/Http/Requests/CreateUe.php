@@ -24,7 +24,8 @@ class CreateUe extends FormRequest
         return [
             "label" => ['required'],
             "code" => ['required'],
-            "filiere_id" => ['required', 'exists:filieres,id'],
+            "filieres_id" => ['required', 'array'],
+            "filieres_id.*" => ['exists:filieres,id'],
             "semestre_id" => ['required', 'exists:semestres,id'],
         ];
     }

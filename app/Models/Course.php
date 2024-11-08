@@ -22,6 +22,9 @@ class Course extends Model
     {
         return $this->belongsToMany(Filiere::class);
     }
+    public function classe():BelongsTo{
+        return $this->belongsTo(Classe::class);
+    }
     public function course_week(): BelongsTo{
         return $this->belongsTo(CourseWeek::class);
     }

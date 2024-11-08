@@ -14,7 +14,6 @@ class Ue extends Model
     protected $fillable = [
         'label',
         'code',
-        'filiere_id',
         'semestre_id',
     ];
     public function filieres(): BelongsToMany{

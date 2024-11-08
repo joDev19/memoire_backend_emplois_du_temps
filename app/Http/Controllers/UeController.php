@@ -29,7 +29,7 @@ class UeController extends Controller
      */
     public function create()
     {
-        //
+        return response()->json($this->ueService->create(), 200);
     }
 
     /**

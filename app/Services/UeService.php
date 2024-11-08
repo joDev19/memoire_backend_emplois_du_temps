@@ -14,7 +14,21 @@ class UeService extends CrudService {
         return new UeRessource(parent::show($id));
     }
     public function store($data){
-        dd($data);
+        $ue = parent::store([
+            "code" => $data["code"],
+            "label" => $data["label"],
+            "semestre_id" => $data["semestre_id"],
+        ]);
+        $ue->filieres()->attach($data['filieres_id']);
+        return $ue;
+        //dd($data);
+    }
+    public function create(){
+        // return filiere and semester
+        return [
+            "filieres" => (new FiliereService())->index(),
+            "semestres" => (new SemestreService())->index(),
+        ];
     }
 }
 

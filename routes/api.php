@@ -31,6 +31,7 @@ Route::get('ecs/year/{year}/filiere/{filiere}', [EcController::class, 'getByYear
 // Route::get('/ecs/create', [EcController::class, 'create'])->name('ecs.create');
 
 Route::apiResource('filieres', FiliereController::class);
+Route::get('ues/create', [UeController::class, 'create']);
 Route::apiResource('ues', UeController::class);
 Route::get('users/create', [UserController::class, 'create']);
 Route::apiResource('users', UserController::class);

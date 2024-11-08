@@ -3,6 +3,7 @@ namespace App\Services;
 use App\Http\Resources\CourseRessource;
 use App\Http\Resources\TabletimeRessource;
 use App\Http\Resources\TimetableByFiliereRessource;
+use \Spatie\LaravelPdf\Enums\Orientation;
 use App\Models\CourseWeek;
 use Spatie\Browsershot\Browsershot;
 use Spatie\LaravelPdf\Facades\Pdf;
@@ -42,19 +43,19 @@ class CourseWeekService extends CrudService
                     // prof
                     if ($_course->ec->professeur->id == (new EcService())->show($course["ec_id"])->professeur->id) {
                         // il y a un conflit de professeur
-                        abort(500, 'Il y a un conflit de professeur');
+                        abort(500, 'Il y a un conflit de professeur ce: ' . $course['day'] . ' à ' . $course['start']);
                     }
                     // classe
                     if ($_course->classe_id == (new ClasseService())->show($course["classe_id"])->id) {
                         // il y a un conflit de salle de classe
-                        abort(500, 'Il y a un conflit de salle de classe');
+                        abort(500, 'Il y a un conflit de salle de classe ce: ' . $course['day'] . ' à ' . $course['start']);
                     }
                     // filiere
                     $_filieresOfCourse = $_course->filieres->pluck('id');
                     foreach ($course['filieres_id'] as $filiereId) {
                         if (in_array($filiereId, $_filieresOfCourse->toArray())) {
                             // il y a un conflit de filieres
-                            abort(500, 'Il y a un conflit de filieres');
+                            abort(500, 'Il y a un conflit de filieres ce: ' . $course['day'] . ' à ' . $course['start']);
                         }
                     }
                 }
@@ -101,6 +102,24 @@ class CourseWeekService extends CrudService
         }
         return $array;
     }
+    public function addFiliereToArray($filieres, $_array)
+    {
+        $array = $_array;
+        // dd($array);
+        foreach ($filieres as $filiere) {
+            if (
+                !$array->contains(function (string $value) use ($filiere) {
+                    return $value == $filiere;
+                })
+            ) {
+                $array->add($filiere);
+            }
+            # code...
+        }
+        return $array;
+    }
+
+
 
     public function getAllMails($yearId, $weekId, $filiereId = null)
     {
@@ -131,35 +150,88 @@ class CourseWeekService extends CrudService
         //return $users;
         return $emails;
     }
+
+    public function getAllFiliere($yearId, $weekId, $filiereId)
+    {
+
+    }
     public function generatePdf($yearId, $weekId, $filiereId)
     {
-        //dd('aze');
+        // dd($weekId);
         $path = public_path("/pdf_temp/");
         if (!file_exists($path)) {
             mkdir($path);
         }
-        // Browsershot::url("http://127.0.0.1:8000/")
-        //  Browsershot::url(route('test-route'))
-        //     ->timeout(50000)
-        //     ->setNodeBinary('/snap/bin/node')
-        //     ->setNpmBinary('/snap/bin/npm')
-        //     ->format('A4')
-        //     ->showBackground()
-        //     ->save($path . 'urlToPdf.pdf');
-        Pdf::view('pdfs.timetable')->withBrowsershot(function (Browsershot $browsershot) {
-            // $browsershot->scale(0.5);
-            $browsershot->setNodeBinary('/snap/bin/node');
-            $browsershot->setNpmBinary('/snap/bin/npm');
-            $browsershot->timeout(6000);
-        })->save($path . 'urlToPdf.pdf');
+        // collecter les infos du pdfs
+        $timetable = $this->getTabletime($yearId, $weekId, $filiereId);
+        $filieres = [];
+        foreach ($timetable->courses as $key => $course) {
+            # code...
+            //dd($course->filieres()->pluck('code'));
+            $filieres = $this->addFiliereToArray($course->filieres()->pluck('code'), collect($filieres));
+        }
+        // liste de toutes les filieres
+        $allFilieres = (new FiliereService())->index();
+        $allSalles = (new ClasseService())->index();
+        $allEcs = (new EcService())->index();
+        $data = [
+            "filieres" => $filieres->toArray(),
+            "startDate" => $timetable->start,
+            "year" => (new YearService())->show($yearId)->label,
+            "courses" => $timetable->courses,
+            "allFilieres" => $allFilieres,
+            "allEcs" => $allEcs,
+            "allSalles" => $allSalles,
+        ];
+        $data['courses'] = $this->formatCourse($data['courses']);
+        //dd($data['courses'][0]);
+        Pdf::view('pdfs.timetable', $data)->orientation(Orientation::Landscape)->format('a4')
+            ->withBrowsershot(callback: function (Browsershot $browsershot) {
+                $browsershot->scale(0.6);
+                $browsershot->margins(0, 0, 0, 0);
+                $browsershot->setNodeBinary('/snap/bin/node');
+                $browsershot->setNpmBinary('/snap/bin/npm');
+                $browsershot->timeout(6000);
+            })->save($path . 'urlToPdf.pdf');
+        return view('pdfs.timetable', $data);
 
     }
+
+    public function formatCourse($courses)
+    {
+        $data = $courses;
+        foreach ($data as $key => $course) {
+            # code...
+            $tmp = [
+                "id" => $course->id,
+                "title" => $course->ec->label,
+                "salle" => $course->classe->label,
+                "start" => $course->day . 'T' . $course->start,
+                "end" => $course->day . 'T' . $course->end,
+                "prof" => '' . (new EcService())->show($course->ec_id)->professeur->name . '',
+                "filieres" =>  array_map(function($filiere){
+                    return $filiere['code'];
+                }, $course->filieres->toArray()),
+                "backgroundColor" => "white",
+                "textColor" => "black",
+                "masseHoraire" => '' . $course->ec->masse_horaire . '',
+                "remaining_hour" => '' . $course->ec->remaining_hour . '',
+            ];
+            $data[$key] = $tmp;
+           // $data[$key] = json_encode($tmp, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        }
+        return $data;
+    }
+
+
 
     public function forward($yearId, $weekId, $filiereId)
     {
         $emails = $this->getAllMails($yearId, $weekId, $filiereId);
         //dd($emails);
+
         return $this->generatePdf($yearId, $weekId, $filiereId);
+        //return $emails;
 
         //return $emails;
     }

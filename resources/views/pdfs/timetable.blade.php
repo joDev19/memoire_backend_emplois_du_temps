@@ -39,7 +39,7 @@
                 initialView: 'timeGridWeek',
                 weekNumberCalculation: 'ISO',
                 slotMinTime: "08:00:00",
-                slotMaxTime: "19:00:00",
+                slotMaxTime: "20:00:00",
                 titleFormat: {
                     // will produce something like "Tuesday, September 18, 2018"
                     month: 'long',
@@ -50,7 +50,7 @@
                 },
                 eventOverlap: false,
                 slotEventOverlap: false,
-                selectable: true,
+                selectable: false,
                 dateClick: function(info) {
                     alert('Clicked on: ' + info.dateStr);
                 },
@@ -65,40 +65,38 @@
                 },
                 // slotDuration: "01:00:00",
                 // slotLabelInterval: "00:30",
-                weekends: false,
-                events: [{ // this object will be "parsed" into an Event Object
-                        id: '1',
-                        title: 'Politique de sécurité des systèmes d’information', // a property!
-                        start: new Date('2024-10-30T08:00'), // a property!
-                        end: new Date(
-                        '2024-10-30T12:00'), // a property! ** see important note below about 'end' **
-                        backgroundColor: "white",
-                        prof: "E. ASSOGBA",
-                        salle: 'PADTICE',
-                        filiere: 'SI',
-                        textColor: "black",
-                        masseHoraire: "/25h",
-                        editable: true,
-                    },
+                // weekends: false,
+                hiddenDays: [0],
+                initialDate: "{{ $startDate }}",
+                events:
                     // {
-                    //     title: 'Cours de développement web', // a property!
-                    //     start: new Date('2024-09-14T09:00'), // a property!
-                    //     end: new Date('2024-09-14T14:00'), // a property! ** see important note below about 'end' **
-                    //     editable: true,
-                    // }
-                ],
+                    //     id: 1,
+                    //     title: 1,
+                    //     salle: 1,
+                    //     start: "2024-11-08T08:00:00",
+                    //     end: "2024-11-08T12:00:00",
+                    //     prof: "Ratheil HOUNDJI",
+                    //     filieres: [
+                    //         1, 2, 3
+                    //     ],
+                    //     backgroundColor: "white",
+                    //     textColor: "black"
+                    // },
+                    @json($courses)
+                ,
                 eventDidMount: function(info) {
-                    console.log(info.event.extendedProps);
+                    //console.log(info.event.extendedProps);
                 },
+                handleWindowResize: true,
                 eventContent: function(info) {
-                    console.log(days[info.event.start.getDay()])
-                    console.log(info.event.start.getHours())
+                    //console.log(days[info.event.start.getDay()])
+                    //console.log(info.event.start.getHours())
                     // return info.event.title
                     return {
                         html: `
                             <div class="flex flex-col w-full h-full  justify-center items-center">
-                                <p class="text-center">${(info.event.start).getHours()}h${(info.event.start).getMinutes()} - ${(info.event.end).getHours()}h${(info.event.end).getMinutes()} : <span class="bg-sky-200 text-sky-700 font-semibold p-1">${info.event.extendedProps.filiere}<span/></p>
-                                <p class="text-center">${info.event.title} (${info.event.extendedProps.masseHoraire})</p>
+                                <p class="text-center">${(info.event.start).getHours()}h${(info.event.start).getMinutes()} - ${(info.event.end).getHours()}h${(info.event.end).getMinutes()} : <span class="bg-sky-200 text-sky-700 font-semibold p-1">${info.event.extendedProps.filieres}<span/></p>
+                                <p class="text-center">${info.event.title} (${info.event.extendedProps.remaining_hour}h / ${info.event.extendedProps.masseHoraire}h)</p>
                                 <p class="text-center">${info.event.extendedProps.salle}</p>
                                 <p class="text-center">${info.event.extendedProps.prof}</p>
                             </div>
@@ -106,6 +104,7 @@
                     }
                 }
             });
+
             calendar.render();
             var event = calendar.getEventById('1')
             console.log(event);
@@ -115,7 +114,7 @@
 
 <body>
     <div class="my-2 w-full flex justify-around items-center">
-        <img src="{{ asset('images/uac.png') }}" alt="" style="width: 150px;">
+        <img src="{{ public_path('images/uac.png') }}" alt="" style="width: 150px;">
         <div>
             <p class="text-xl text-center">UNIVERSITE D'ABOMEY-CALAVI</p>
             <p class="text-xl text-center">INSTITUT DE FORMATION ET DE RECHERCHE EN INFORMATIQUE IFRI – UAC</p>
@@ -124,11 +123,15 @@
     </div>
     <div>
         <p class="text-lg text-center">
-            <span class="font-semibold">Emploi du temps - Licence 2 :</span><span> GL – IA – IM – SI – SE&IoT</span>
+            <span class="font-semibold">Emploi du temps - Licence 2 : </span>
+            @foreach ($filieres as $filiere)
+                <span> {{ $filiere }} </span>
+            @endforeach
         </p>
-        <p class="text-lg text-center font-semibold my-5">SEMAINE DU 10 juin 2024</p>
+        <strong id="strong"></strong>
+        <p class="text-lg text-center font-semibold my-5">SEMAINE DU {{ $startDate }}</p>
     </div>
-    <div id='calendar'></div>
+    <div id='calendar' style="width: 100%"></div>
 </body>
 
 </html>
