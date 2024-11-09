@@ -3,6 +3,8 @@ namespace App\Services;
 use App\Http\Resources\CourseRessource;
 use App\Http\Resources\TabletimeRessource;
 use App\Http\Resources\TimetableByFiliereRessource;
+use App\Mail\Timetable;
+use Illuminate\Support\Facades\Mail;
 use \Spatie\LaravelPdf\Enums\Orientation;
 use App\Models\CourseWeek;
 use Spatie\Browsershot\Browsershot;
@@ -118,9 +120,6 @@ class CourseWeekService extends CrudService
         }
         return $array;
     }
-
-
-
     public function getAllMails($yearId, $weekId, $filiereId = null)
     {
         // récupérer les emplois cours qui sont dans l'emplois du temps à partager avec les filieres et les professeurs.
@@ -149,11 +148,6 @@ class CourseWeekService extends CrudService
         }
         //return $users;
         return $emails;
-    }
-
-    public function getAllFiliere($yearId, $weekId, $filiereId)
-    {
-
     }
     public function generatePdf($yearId, $weekId, $filiereId)
     {
@@ -184,19 +178,25 @@ class CourseWeekService extends CrudService
             "allSalles" => $allSalles,
         ];
         $data['courses'] = $this->formatCourse($data['courses']);
+        $pdfName = 'Emploi_du_temps-' . $data['year'] . '-' . date_format(date_create($data['startDate']), "d-m-Y") . '.pdf';
         //dd($data['courses'][0]);
         Pdf::view('pdfs.timetable', $data)->orientation(Orientation::Landscape)->format('a4')
             ->withBrowsershot(callback: function (Browsershot $browsershot) {
-                $browsershot->scale(0.6);
+                $browsershot->scale(0.9);
                 $browsershot->margins(0, 0, 0, 0);
                 $browsershot->setNodeBinary('/snap/bin/node');
                 $browsershot->setNpmBinary('/snap/bin/npm');
                 $browsershot->timeout(6000);
-            })->save($path . 'urlToPdf.pdf');
-        return view('pdfs.timetable', $data);
+            })->save($path . $pdfName);
+        // emails.
+        return [
+            "pdfPath" => $path . '' . $pdfName,
+            "year" => $data['year'],
+            "startDate" => date_format(date_create($data['startDate']), "d/m/Y")
+        ];
+        // return view('pdfs.timetable', $data);
 
     }
-
     public function formatCourse($courses)
     {
         $data = $courses;
@@ -209,7 +209,7 @@ class CourseWeekService extends CrudService
                 "start" => $course->day . 'T' . $course->start,
                 "end" => $course->day . 'T' . $course->end,
                 "prof" => '' . (new EcService())->show($course->ec_id)->professeur->name . '',
-                "filieres" =>  array_map(function($filiere){
+                "filieres" => array_map(function ($filiere) {
                     return $filiere['code'];
                 }, $course->filieres->toArray()),
                 "backgroundColor" => "white",
@@ -218,22 +218,9 @@ class CourseWeekService extends CrudService
                 "remaining_hour" => '' . $course->ec->remaining_hour . '',
             ];
             $data[$key] = $tmp;
-           // $data[$key] = json_encode($tmp, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            // $data[$key] = json_encode($tmp, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         }
         return $data;
-    }
-
-
-
-    public function forward($yearId, $weekId, $filiereId)
-    {
-        $emails = $this->getAllMails($yearId, $weekId, $filiereId);
-        //dd($emails);
-
-        return $this->generatePdf($yearId, $weekId, $filiereId);
-        //return $emails;
-
-        //return $emails;
     }
 
     public function getOldCourse($date, $yearId)
@@ -265,4 +252,16 @@ class CourseWeekService extends CrudService
         // retourner un emplois du temps avec cette nouvelle date ( au même format que les emplois du temps précédent)...
         return CourseRessource::collection($courses);
     }
+    public function forward($yearId, $weekId, $filiereId)
+    {
+        $emails = $this->getAllMails($yearId, $weekId, $filiereId);
+        // dd($emails);
+        $data = $this->generatePdf($yearId, $weekId, $filiereId);
+        foreach ($emails->toArray() as $key => $email) {
+            Mail::to($email)->send(new Timetable($data));
+        }
+        return "done";
+
+    }
 }
+
