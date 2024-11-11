@@ -87,8 +87,6 @@ class CourseWeekService extends CrudService
         if ($filiereId == null) {
             return new TabletimeRessource($courseWeek);
         }
-        // dd($filiereId);
-        //dd(new TimetableByFiliereRessource($courseWeek, $filiereId));
         return new TimetableByFiliereRessource($courseWeek, $filiereId);
 
     }
@@ -124,13 +122,18 @@ class CourseWeekService extends CrudService
     {
         // récupérer les emplois cours qui sont dans l'emplois du temps à partager avec les filieres et les professeurs.
         //dd($this->getTabletime($yearId, $weekId, $filiereId)->courses);
-        $cours = $this->getTabletime($yearId, $weekId, $filiereId)->courses()->with('filieres', 'ec.professeur')->get();
-        //dd($cours->count());
+        $cours = $filiereId != "null" ? $this->getTabletime($yearId, $weekId, $filiereId)->courses()
+            ->whereHas('filieres', function($query) use ($filiereId) {
+                $query->where('filieres.id', $filiereId);
+            })->with('filieres', 'ec.professeur')->get() : $this->getTabletime($yearId, $weekId, $filiereId)->courses()
+               ->with('filieres', 'ec.professeur')->get();
+        //dd($cournulls);
         // mettre dans un tableau les emails des professeurs.
         // dd($cours);
         $emails = collect([]);
         // mettre dans un tableau les emails des responsables.
         $userService = new UserService();
+        //dd($cours->count());
         foreach ($cours as $key => $cour) {
             $emails = $this->addEmailToArray($cour->ec->professeur->email, $emails);
             // dd($emails);
@@ -255,8 +258,9 @@ class CourseWeekService extends CrudService
     public function forward($yearId, $weekId, $filiereId)
     {
         $emails = $this->getAllMails($yearId, $weekId, $filiereId);
-        // dd($emails);
+        //dd($emails);
         $data = $this->generatePdf($yearId, $weekId, $filiereId);
+        //dd($emails);
         foreach ($emails->toArray() as $key => $email) {
             Mail::to($email)->send(new Timetable($data));
         }

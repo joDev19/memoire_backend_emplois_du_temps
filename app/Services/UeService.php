@@ -30,5 +30,11 @@ class UeService extends CrudService {
             "semestres" => (new SemestreService())->index(),
         ];
     }
+
+    public function getByYear($yearId){
+        return Ue::whereHas('semestre', function($subQuery) use($yearId){
+            $subQuery->where('semestres.year_id', $yearId);
+        })->get();
+    }
 }
 
