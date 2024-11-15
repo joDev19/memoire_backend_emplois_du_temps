@@ -2,7 +2,7 @@
 
 # <h1 style="text-align:center;">ShedU Readme</h1>
 
-This is the backend of SchedU. Be sure to clone this and the frontend to ensure the goos working of a project. You should ensure that you have `composer`  with `php 8.3` and node js installed on you computer. If you don't, you can use [this](https://kinsta.com/blog/install-composer/) for composer and [this](https://kinsta.com/blog/how-to-install-node-js/) for node js
+This is the backend of SchedU. Be sure to clone this and the frontend to ensure the goos working of a project. You should ensure that you have `composer`  with `php 8.3` and node js installed on you computer. If you don't, you can use [this](https://kinsta.com/blog/install-composer/) for composer and [this](https://kinsta.com/blog/how-to-install-node-js/) for node js. You can know if you have composer installed by making: `composer --version` and for node, you can use `node -v`
 
 For runing this project you need to follow this step:
 
@@ -29,5 +29,3 @@ Create a new database corresponding to the database name provide in the .env fil
 ## 6. Run the project
 
 Use php `artisan serve command` to run the project.
-
-
