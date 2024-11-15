@@ -67,6 +67,18 @@ class UserService extends CrudService
             ['filiere_id', '=', $filiereId],
         ])->get();
     }
+    public function getEnseignantByYear($yearId)
+    {
+        return User::whereHas('roles', function ($roleQuery) use ($yearId) {
+            $roleQuery->where('label', 'professeur');
+        })->whereHas('ecs', function ($ecQuery) use ($yearId) {
+            $ecQuery->whereHas('ue', function ($ueQuery) use ($yearId) {
+                $ueQuery->whereHas('semestre', function ($semestreQuery) use ($yearId) {
+                    $semestreQuery->where('year_id', $yearId);
+                });
+            });
+        })->get();
+    }
     public function login($email, $password, $matricule = null)
     {
         // dd($email, $password, $matricule);
@@ -78,7 +90,7 @@ class UserService extends CrudService
                 abort(404, 'This email is not found');
             }
             // vérifier son mot de passe
-            if(!Hash::check($password, $user->password)){
+            if (!Hash::check($password, $user->password)) {
                 abort(401, "Bad credentials");
             }
             // good ! We can login teacher
@@ -91,7 +103,7 @@ class UserService extends CrudService
             abort(404, 'This matricule is not found');
         }
         // vérifier son mot de passe
-        if(!Hash::check($password, $user->password)){
+        if (!Hash::check($password, $user->password)) {
             abort(401, "Bad credentials");
         }
         // good ! We can login class prefect
@@ -99,7 +111,8 @@ class UserService extends CrudService
         return $user;
     }
 
-    function logout(){
+    function logout()
+    {
         return Auth::logout();
     }
 

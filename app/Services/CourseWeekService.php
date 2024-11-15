@@ -16,6 +16,33 @@ class CourseWeekService extends CrudService
     {
         parent::__construct(new CourseWeek());
     }
+    public function createDashboard()
+    {
+        $userService = new UserService();
+        $nbrCoordonnateur = $userService->getAllCoordinateur()->count();
+        $nbrEnseignants = $userService->getAllProfesseur()->count();
+        $nbrResponsable = $userService->getAllResponsable()->count();
+        $nbrSalleDeClasse = (new ClasseService())->index()->count();
+        $nbrFiliere = (new FiliereService())->index()->count();
+        $years = (new YearService())->yearStats();
+        /**
+         * years [
+         *  label: ""
+         *  nbrUe : 02,
+         *  nbrEmploi : 02,
+         *  nbrResponsable : 02,
+         *  nbrProfesseur : 10
+         * ]
+         */
+        return [
+            "nbrCoordonnateur" => $nbrCoordonnateur,
+            "nbrEnseignants" => $nbrEnseignants,
+            "nbrResponsable" => $nbrResponsable,
+            "nbrSalleDeClasse" => $nbrSalleDeClasse,
+            "nbrFiliere" => $nbrFiliere,
+            "years" => $years,
+        ];
+    }
 
     public function storeTableTime($data)
     {
@@ -123,10 +150,10 @@ class CourseWeekService extends CrudService
         // récupérer les emplois cours qui sont dans l'emplois du temps à partager avec les filieres et les professeurs.
         //dd($this->getTabletime($yearId, $weekId, $filiereId)->courses);
         $cours = $filiereId != "null" ? $this->getTabletime($yearId, $weekId, $filiereId)->courses()
-            ->whereHas('filieres', function($query) use ($filiereId) {
+            ->whereHas('filieres', function ($query) use ($filiereId) {
                 $query->where('filieres.id', $filiereId);
             })->with('filieres', 'ec.professeur')->get() : $this->getTabletime($yearId, $weekId, $filiereId)->courses()
-               ->with('filieres', 'ec.professeur')->get();
+                ->with('filieres', 'ec.professeur')->get();
         //dd($cournulls);
         // mettre dans un tableau les emails des professeurs.
         // dd($cours);

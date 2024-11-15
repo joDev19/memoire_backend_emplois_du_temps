@@ -14,5 +14,8 @@ class Year extends Model
         return $this->hasMany(Semestre::class);
     }
     protected $with = ['semestres'];
+    public function users(): HasMany{
+        return $this->hasMany(User::class);
+    }
 
 }

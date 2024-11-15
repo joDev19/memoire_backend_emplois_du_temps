@@ -87,4 +87,7 @@ class CourseWeekController extends Controller
     public function getOldCourses(GetOldCourses $request){
         return response()->json($this->courseWeekService->getOldCourse($request->oldDate, $request->yearId), 200);
     }
+    public function createDashboard(){
+        return response()->json($this->courseWeekService->createDashboard(), 200);
+    }
 }
