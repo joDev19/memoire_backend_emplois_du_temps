@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('course_weeks', function (Blueprint $table) {
-            $table->id();
-            $table->date('start');
-            $table->date('end');
-            $table->timestamps();
+        Schema::table('course_weeks', function (Blueprint $table) {
+            $table->enum('status', ['created', 'shared'])->default("created");
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('course_weeks');
+        Schema::table('course_weeks', function (Blueprint $table) {
+            //
+        });
     }
 };

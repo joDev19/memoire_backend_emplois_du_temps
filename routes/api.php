@@ -23,7 +23,7 @@ Route::get('/user', function (Request $request) {
 Route::apiResource('classes', ClasseController::class);
 Route::get('semestres/create', [SemestreController::class, 'create'])->name('semestres.create');
 Route::apiResource('semestres', SemestreController::class);
-Route::apiResource('years', YearController::class);
+Route::apiResource('years', YearController::class)->middleware('auth:sanctum');
 Route::Resource('ecs', EcController::class);
 Route::post('ecs/assign-teacher/{teacherId}/', [EcController::class, 'assignTeacher'])->name('assign-teacher-to-ec');
 Route::get('ecs/year/{year}', [EcController::class, 'getByYear']);
@@ -40,10 +40,12 @@ Route::apiResource('hours', HourController::class);
 Route::get('course/create/year/{year}', [CourseController::class, 'create'])->name('courses.create');
 Route::apiResource('courses', CourseController::class);
 Route::apiResource('courseWeeks', CourseWeekController::class);
+Route::get('courseWeeks/year/{year_id}', [CourseWeekController::class, 'getWeekByYear'])->whereNumber('year_id');
 Route::post('timetables', [CourseWeekController::class, 'storeTimetables']);
 Route::get('timetables/year/{yearId}/week/{weekId}', [CourseWeekController::class, 'getTimetables']);
 Route::get('timetables/forward/year/{yearId}/week/{weekId}/filiere/{filiereId}', [CourseWeekController::class, 'forward']);
 Route::post('courses/get-old-courses', [CourseWeekController::class, 'getOldCourses']);
 Route::get('dashboard/create', [CourseWeekController::class, 'createDashboard']);
+Route::post('showBanner', [CourseWeekController::class, 'showBanner']);
 //EcDone
 Route::apiResource('ec-dones', EcDoneController::class);

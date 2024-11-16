@@ -11,7 +11,9 @@ class CourseWeek extends Model
     use HasFactory;
     protected $fillable = [
         'start',
-        'end'
+        'end',
+        'status',
+        'year_id',
     ];
     public function courses(): HasMany{
         return $this->hasMany(Course::class);

@@ -18,6 +18,7 @@ class TabletimeRessource extends JsonResource
         //dd($this->id);
         return [
             "id" => $this->id,
+            "status" => $this->status,
             "start" => $this->start,
             "end" => $this->end,
             "courses" => CourseRessource::collection($this->courses),

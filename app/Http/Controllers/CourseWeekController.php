@@ -90,4 +90,13 @@ class CourseWeekController extends Controller
     public function createDashboard(){
         return response()->json($this->courseWeekService->createDashboard(), 200);
     }
+    public function showBanner(Request $request){
+        $request->validate([
+            "_date" => "required|date"
+        ]);
+        return response()->json($this->courseWeekService->showBanner($request->_date), 200);
+    }
+    public function getWeekByYear($year_id){
+        return response()->json($this->courseWeekService->getWeekByYear($year_id));
+    }
 }

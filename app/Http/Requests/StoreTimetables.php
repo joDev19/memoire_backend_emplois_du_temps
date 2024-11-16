@@ -33,6 +33,7 @@ class StoreTimetables extends FormRequest
             "courses.*.filieres_id.*" => ['exists:filieres,id'],
             "courses.*.classe_id" => ['exists:classes,id'],
             // 'courses.*.course_week_id' => ['required', 'exists:course_weeks,id']
+            "year_id" => ["required", "exists:years,id"]
         ];
     }
 }

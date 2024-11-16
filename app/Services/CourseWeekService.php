@@ -46,15 +46,17 @@ class CourseWeekService extends CrudService
 
     public function storeTableTime($data)
     {
+        //dd($data);
         $_data = collect($data);
         $week = null;
         $courseService = new CourseService();
-        if (CourseWeek::where('start', '=', $_data->get('weekStartDate'))->count() > 0) {
-            $week = CourseWeek::where('start', '=', $_data->get('weekStartDate'))->first();
+        if (CourseWeek::where([['start', '=', $_data->get('weekStartDate')], ['year_id', '=', $_data->get('year_id')]])->exists()) {
+            $week = CourseWeek::where([['start', '=', $_data->get('weekStartDate')], ['year_id', '=', $_data->get('year_id')]])->first();
         } else {
             $week = parent::store([
                 'start' => $_data->get('weekStartDate'),
-                'end' => $_data->get('weekEndDate')
+                'end' => $_data->get('weekEndDate'),
+                'year_id' => $_data->get('year_id'),
             ]);
         }
         // vérification
@@ -100,17 +102,18 @@ class CourseWeekService extends CrudService
 
     public function getTabletime($yearId, $weekId, $filiereId = null)
     {
-        $courseWeek = CourseWeek::with('courses.filieres')->whereHas('courses', function ($query) use ($yearId): void {
-            $query->whereHas('ec', function ($subQuery) use ($yearId) {
-                $subQuery->whereHas('ue', function ($subSubQuery) use ($yearId) {
-                    $subSubQuery->whereHas('semestre', function ($subSubSubQuery) use ($yearId) {
-                        $subSubSubQuery->wherehas('year', function ($subSubSubSubQuery) use ($yearId) {
-                            $subSubSubSubQuery->where('id', $yearId);
-                        });
-                    });
-                });
-            });
-        })->findOrFail($weekId);
+        $courseWeek = CourseWeek::with('courses.filieres')->findOrFail($weekId);
+        // $courseWeek = CourseWeek::with('courses.filieres')->whereHas('courses', function ($query) use ($yearId): void {
+        //     $query->whereHas('ec', function ($subQuery) use ($yearId) {
+        //         $subQuery->whereHas('ue', function ($subSubQuery) use ($yearId) {
+        //             $subSubQuery->whereHas('semestre', function ($subSubSubQuery) use ($yearId) {
+        //                 $subSubSubQuery->wherehas('year', function ($subSubSubSubQuery) use ($yearId) {
+        //                     $subSubSubSubQuery->where('id', $yearId);
+        //                 });
+        //             });
+        //         });
+        //     });
+        // })->findOrFail($weekId);
         if ($filiereId == null) {
             return new TabletimeRessource($courseWeek);
         }
@@ -256,22 +259,32 @@ class CourseWeekService extends CrudService
     public function getOldCourse($date, $yearId)
     {
 
-        // selectionner l'id semaine de cours qui à cette date de début
-        $weekId = $this->filter(['start' => $date])->first()->id;
-        // récupérer ses cours
-        // filtrer les cours en fonction de l'année
-        $courseWeek = CourseWeek::with('courses.filieres')->whereHas('courses', function ($query) use ($yearId): void {
-            $query->whereHas('ec', function ($subQuery) use ($yearId) {
-                $subQuery->whereHas('ue', function ($subSubQuery) use ($yearId) {
-                    $subSubQuery->whereHas('semestre', function ($subSubSubQuery) use ($yearId) {
-                        $subSubSubQuery->wherehas('year', function ($subSubSubSubQuery) use ($yearId) {
-                            $subSubSubSubQuery->where('id', $yearId);
-                        });
-                    });
-                });
-            });
-        })->findOrFail($weekId);
-        $courses = $courseWeek->courses;
+        // selectionner la semaine de cours ayant la date et le year_id fourni
+        $courseWeek = $this->filter([
+            'start' => $date,
+            'year_id' => $yearId
+        ])->first();
+        // // selectionner l'id semaine de cours qui à cette date de début
+        // $weekId = $this->filter(['start' => $date])->first()->id;
+        // // récupérer ses cours
+        // // filtrer les cours en fonction de l'année
+        // $courseWeek = CourseWeek::with('courses.filieres')->whereHas('courses', function ($query) use ($yearId): void {
+        //     $query->whereHas('ec', function ($subQuery) use ($yearId) {
+        //         $subQuery->whereHas('ue', function ($subSubQuery) use ($yearId) {
+        //             $subSubQuery->whereHas('semestre', function ($subSubSubQuery) use ($yearId) {
+        //                 $subSubSubQuery->wherehas('year', function ($subSubSubSubQuery) use ($yearId) {
+        //                     $subSubSubSubQuery->where('id', $yearId);
+        //                 });
+        //             });
+        //         });
+        //     });
+        // })->findOrFail($weekId);
+        $courses = [];
+        if($courseWeek != null){
+            $courses = $courseWeek->courses;
+        }else{
+            abort(500, "Pas d'emploi du temps pour la semaine précédente");
+        }
         // faire une boucle sur les cours et leur ajouter à chaque fois 1 semaine ( 7 jours )
         foreach ($courses as $key => $course) {
             $newDate = date_create($course->day);
@@ -291,8 +304,25 @@ class CourseWeekService extends CrudService
         foreach ($emails->toArray() as $key => $email) {
             Mail::to($email)->send(new Timetable($data));
         }
+        if($filiereId == "null"){
+            // il a partagé pour toute les filières
+            $courseWeek = CourseWeek::findOrFail($weekId);
+            $courseWeek->status = "shared";
+            $courseWeek->save();
+        }
         return "done";
 
+    }
+    public function showBanner($date)
+    {
+        if ((new CourseWeekService())->index(["start" => date_format(date_create($date), "Y-m-d")])->count() > 0){
+            return false;
+        }
+        return true;
+    }
+    public function getWeekByYear($yearId)
+    {
+        return $this->index(['year_id' => $yearId])->get();
     }
 }
 
