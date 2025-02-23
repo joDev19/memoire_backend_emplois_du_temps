@@ -182,13 +182,7 @@ class CourseWeekService extends CrudService
         //return $users;
         return $emails;
     }
-    public function generatePdf($yearId, $weekId, $filiereId)
-    {
-        // dd($weekId);
-        $path = public_path("/pdf_temp/");
-        if (!file_exists($path)) {
-            mkdir($path);
-        }
+    public function getDataForTimetablePdfOrView($yearId, $weekId, $filiereId){
         // collecter les infos du pdfs
         $timetable = $this->getTabletime($yearId, $weekId, $filiereId);
         $filieres = [];
@@ -201,7 +195,7 @@ class CourseWeekService extends CrudService
         $allFilieres = (new FiliereService())->index();
         $allSalles = (new ClasseService())->index();
         $allEcs = (new EcService())->index();
-        $data = [
+        return [
             "filieres" => $filieres->toArray(),
             "startDate" => $timetable->start,
             "year" => (new YearService())->show($yearId)->label,
@@ -210,6 +204,16 @@ class CourseWeekService extends CrudService
             "allEcs" => $allEcs,
             "allSalles" => $allSalles,
         ];
+    }
+    public function generatePdf($yearId, $weekId, $filiereId)
+    {
+        // dd($weekId);
+        $path = public_path("/pdf_temp/");
+        if (!file_exists($path)) {
+            mkdir($path);
+        }
+
+        $data = $this->getDataForTimetablePdfOrView($yearId, $weekId, $filiereId);
         $data['courses'] = $this->formatCourse($data['courses']);
         $pdfName = 'Emploi_du_temps-' . $data['year'] . '-' . date_format(date_create($data['startDate']), "d-m-Y") . '.pdf';
         //dd($data['courses'][0]);
@@ -227,7 +231,6 @@ class CourseWeekService extends CrudService
             "year" => $data['year'],
             "startDate" => date_format(date_create($data['startDate']), "d/m/Y")
         ];
-        // return view('pdfs.timetable', $data);
 
     }
     public function formatCourse($courses)
@@ -280,9 +283,9 @@ class CourseWeekService extends CrudService
         //     });
         // })->findOrFail($weekId);
         $courses = [];
-        if($courseWeek != null){
+        if ($courseWeek != null) {
             $courses = $courseWeek->courses;
-        }else{
+        } else {
             abort(500, "Pas d'emploi du temps pour la semaine précédente");
         }
         // faire une boucle sur les cours et leur ajouter à chaque fois 1 semaine ( 7 jours )
@@ -304,7 +307,7 @@ class CourseWeekService extends CrudService
         foreach ($emails->toArray() as $key => $email) {
             Mail::to($email)->send(new Timetable($data));
         }
-        if($filiereId == "null"){
+        if ($filiereId == "null") {
             // il a partagé pour toute les filières
             $courseWeek = CourseWeek::findOrFail($weekId);
             $courseWeek->status = "shared";
@@ -315,7 +318,7 @@ class CourseWeekService extends CrudService
     }
     public function showBanner($date)
     {
-        if ((new CourseWeekService())->index(["start" => date_format(date_create($date), "Y-m-d")])->count() > 0){
+        if ((new CourseWeekService())->index(["start" => date_format(date_create($date), "Y-m-d")])->count() > 0) {
             return false;
         }
         return true;
@@ -323,6 +326,11 @@ class CourseWeekService extends CrudService
     public function getWeekByYear($yearId)
     {
         return $this->index(['year_id' => $yearId])->get();
+    }
+
+    public function showTimetable($yearId, $weekId, $filiereId){
+        $data = $this->getDataForTimetablePdfOrView($yearId, $weekId, $filiereId);
+        return view('pdfs.timetable', $data);
     }
 }
 

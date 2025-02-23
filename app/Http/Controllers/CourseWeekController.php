@@ -80,8 +80,8 @@ class CourseWeekController extends Controller
     }
 
     public function forward($yearId, $weekId, $filiereId){
-        return $this->courseWeekService->forward($yearId, $weekId, $filiereId);
-        // return response()->json($this->courseWeekService->forward($yearId, $weekId, $filiereId), 200);
+        // return $this->courseWeekService->forward($yearId, $weekId, $filiereId);
+        return response()->json($this->courseWeekService->forward($yearId, $weekId, $filiereId), 200);
     }
 
     public function getOldCourses(GetOldCourses $request){
@@ -98,5 +98,8 @@ class CourseWeekController extends Controller
     }
     public function getWeekByYear($year_id){
         return response()->json($this->courseWeekService->getWeekByYear($year_id));
+    }
+    public function showTimetable($yearId, $weekId, $filiereId){
+        return $this->courseWeekService->showTimetable($yearId, $weekId, $filiereId);
     }
 }
